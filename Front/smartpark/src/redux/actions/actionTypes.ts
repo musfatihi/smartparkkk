@@ -1,0 +1,14 @@
+
+export const GET_FLOORS = "GET_FLOORS";
+export const DELETE_FLOOR = "DELETE_FLOOR";
+export const CREATE_FLOOR = "CREATE_FLOOR";
+export const UPDATE_FLOOR = "UPDATE_FLOOR";
+
+export const GET_PARKINGS = "GET_PARKINGS";
+export const DELETE_PARKING = "DELETE_PARKING";
+export const CREATE_PARKING = "CREATE_PARKING";
+export const UPDATE_PARKING = "UPDATE_PARKING";
+
+export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
+export const LOGOUT = "LOGOUT";
+export const LOGIN_FAILURE = "LOGIN_FAILURE";
