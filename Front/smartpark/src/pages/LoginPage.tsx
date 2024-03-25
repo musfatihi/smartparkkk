@@ -3,6 +3,7 @@ import loginImage from '../assets/imgs/loginImage.jpg'
 import loginSVG from '../assets/imgs/login-svgrepo-com.svg';
 import {login} from "../redux/actions/authActions";
 import {useAppDispatch} from "../redux/store/store";
+import {Link} from "react-router-dom";
 
 const LoginPage = () => {
 
@@ -40,7 +41,8 @@ const LoginPage = () => {
                     <form onSubmit={handleSubmit}>
                         {error && <div className="mb-4 text-red-500">{error}</div>}
                         <div className="mb-4">
-                            <label htmlFor="email" className="block mb-2 text-sm text-gray-600 dark:text-gray-200">Email</label>
+                            <label htmlFor="email"
+                                   className="block mb-2 text-sm text-gray-600 dark:text-gray-200">Email</label>
                             <input
                                 type="email"
                                 id="email"
@@ -48,10 +50,11 @@ const LoginPage = () => {
                                 onChange={(e) => setEmail(e.target.value)}
                                 placeholder="Email"
                                 className="block w-full px-4 py-2 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40"
-                                required />
+                                required/>
                         </div>
                         <div className="mb-6">
-                            <label htmlFor="password" className="block mb-2 text-sm text-gray-600 dark:text-gray-200">Password</label>
+                            <label htmlFor="password"
+                                   className="block mb-2 text-sm text-gray-600 dark:text-gray-200">Password</label>
                             <input
                                 type="password"
                                 id="password"
@@ -63,7 +66,8 @@ const LoginPage = () => {
                             />
                         </div>
                         <div className="mt-6">
-                            <button type="submit" className="w-full px-4 py-2 tracking-wide text-white transition-colors duration-300 transform bg-green-500 rounded-lg hover:bg-green-400 focus:outline-none focus:bg-green-400 focus:ring focus:ring-green-300 focus:ring-opacity-50">
+                            <button type="submit"
+                                    className="w-full px-4 py-2 tracking-wide text-white transition-colors duration-300 transform bg-green-500 rounded-lg hover:bg-green-400 focus:outline-none focus:bg-green-400 focus:ring focus:ring-green-300 focus:ring-opacity-50">
                                 Sign in
                             </button>
                         </div>
@@ -73,7 +77,6 @@ const LoginPage = () => {
         </div>
     );
 };
-
 
 
 export default LoginPage;

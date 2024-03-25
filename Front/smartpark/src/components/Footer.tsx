@@ -12,8 +12,8 @@ function Footer() {
 
 
           <div className="mx-2 text-white">
-            <h3 className="font-medium tracking-widest uppercase">Sato-Cup</h3>
-            <p className="mt-1 text-xs italic leading-3 tracking-wide capitalize">World Cup Maroc 2030</p>
+            <h3 className="font-medium tracking-widest uppercase">SmartPark</h3>
+            <p className="mt-1 text-xs italic leading-3 tracking-wide capitalize"></p>
           </div>
         </a>
 
@@ -66,7 +66,7 @@ function Footer() {
     </div>
     
     <p className="w-full py-6 mx-auto text-white text-center bg-[#343D33]">
-      &copy; 2024 Majidi Mohamed-Amine. All rights reserved.
+      &copy; 2024 Mustapha FATIHI. All rights reserved.
     </p>
   </footer>
   )

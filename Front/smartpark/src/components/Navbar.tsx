@@ -12,8 +12,8 @@ function Navbar() {
 
 
                         <div className="mx-1 text-gray-700">
-                            <h3 className="uppercase tracking-[0.15em] font-medium ">Sato-Cup</h3>
-                            <p className="text-xs italic ">World Cup Maroc 2030</p>
+                            <h3 className="uppercase tracking-[0.15em] font-medium ">SmartParking</h3>
+                            <p className="text-xs italic "></p>
                         </div>
                     </a>
 
@@ -31,19 +31,23 @@ function Navbar() {
                                 Home
                             </a>
                         </Link>
-                        <Link to="/cities">
+                        <Link to="/parkings">
                             <a className="font-medium text-white lg:text-[#475F45] lg:hover:text-gray-400 lg:mx-4">
-                                Cities
+                                Parkings
                             </a>
                         </Link>
-                        <Link to="/stadiums">
+                        <Link to="/floors">
                             <a className="font-medium text-white lg:text-[#475F45] lg:hover:text-gray-400 lg:mx-4">
-                                Stadiums
+                                Floors
+                            </a>
+                        </Link>
+                        <Link to="/parkingspaces">
+                            <a className="font-medium text-white lg:text-[#475F45] lg:hover:text-gray-400 lg:mx-4">
+                                Parking Spaces
                             </a>
                         </Link>
                         <Link to="/test">
-
-                            <a className="px-8 py-2.5 text-white lg:text-[#475F45] lg:hover:bg-[#475F45] lg:hover:text-white duration-300 transition-colors font-medium lg:mx-4 border-2 lg:border-[#475F45] border-white" href="#">Buy Ticket</a>
+                            <a className="px-8 py-2.5 text-white lg:text-[#475F45] lg:hover:bg-[#475F45] lg:hover:text-white duration-300 transition-colors font-medium lg:mx-4 border-2 lg:border-[#475F45] border-white" href="#">Reserve Place</a>
                         </Link>
 
 
