@@ -3,7 +3,6 @@ package com.smartpark.application.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.GenericGenerator;
 
 import java.util.Set;
 import java.util.UUID;
@@ -21,11 +20,11 @@ public class Floor {
     @Column(nullable = false)
     private Integer nbr;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "parking_id", nullable = false)
     private Parking parking;
 
-    @OneToMany(mappedBy = "floor")
-    private Set<ParkingSpace> parkingSpaces;
+    @OneToMany(mappedBy = "floor",fetch = FetchType.EAGER)
+    private Set<ParkingSpace> parkingSpaces = Set.of();
 
 }

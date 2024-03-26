@@ -1,10 +1,13 @@
-package com.smartpark.application.service.admin;
+package com.smartpark.application.service.implmnts.admin;
 
 import com.smartpark.application.dto.admin.AdminReq;
 import com.smartpark.application.dto.admin.AdminResp;
+import com.smartpark.application.dto.parking.ParkingResp;
 import com.smartpark.application.entity.Admin;
+import com.smartpark.application.entity.Parking;
 import com.smartpark.application.exception.NotFoundException;
 import com.smartpark.application.repository.AdminRepo;
+import com.smartpark.application.service.intrfaces.admin.IAdminService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,7 +18,7 @@ import java.util.UUID;
 
 @Service
 @AllArgsConstructor
-public class AdminService {
+public class AdminService implements IAdminService {
     private AdminRepo adminRepo;
     private ModelMapper modelMapper;
     private PasswordEncoder passwordEncoder;
@@ -24,6 +27,11 @@ public class AdminService {
         return List.of(
                 modelMapper.map(adminRepo.findAll(), AdminResp[].class)
         );
+    }
+
+    @Override
+    public AdminResp save(AdminReq adminReq) {
+        return modelMapper.map(adminRepo.save(modelMapper.map(adminReq, Admin.class)), AdminResp.class);
     }
 
     public void delete(UUID id){
@@ -35,6 +43,12 @@ public class AdminService {
                 .map(admin -> mapToDTO(admin, new AdminResp()))
                 .orElseThrow(NotFoundException::new);
     }
+
+    @Override
+    public AdminResp update(AdminReq adminReq) {
+        return null;
+    }
+
 
     public UUID create(final AdminReq adminReq) {
         final Admin admin = new Admin();

@@ -1,6 +1,6 @@
 package com.smartpark.application.validation;
 
-import com.smartpark.application.service.client.ClientService;
+import com.smartpark.application.service.implmnts.client.ClientService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Constraint;
 import jakarta.validation.ConstraintValidator;

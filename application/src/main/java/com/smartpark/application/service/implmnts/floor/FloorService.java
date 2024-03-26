@@ -1,22 +1,16 @@
-package com.smartpark.application.service.floor;
+package com.smartpark.application.service.implmnts.floor;
 
 import com.smartpark.application.dto.floor.FloorReq;
 import com.smartpark.application.dto.floor.FloorResp;
-import com.smartpark.application.dto.parking.ParkingResp;
 import com.smartpark.application.dto.parkingSpace.ParkingSpaceResp;
 import com.smartpark.application.entity.Floor;
 import com.smartpark.application.entity.Parking;
-import com.smartpark.application.entity.ParkingSpace;
 import com.smartpark.application.exception.NotFoundException;
-import com.smartpark.application.exception.ReferencedWarning;
 import com.smartpark.application.repository.FloorRepo;
 import com.smartpark.application.repository.ParkingRepo;
 import com.smartpark.application.repository.ParkingSpaceRepo;
-import com.smartpark.application.service.intrfaces.IService;
-import jakarta.validation.Valid;
+import com.smartpark.application.service.intrfaces.floor.IFloorService;
 import lombok.AllArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,40 +20,52 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class FloorService implements IService<FloorReq,FloorResp,UUID> {
+public class FloorService implements IFloorService {
 
     private final FloorRepo floorRepository;
     private final ParkingRepo parkingRepository;
     private final ParkingSpaceRepo parkingSpaceRepository;
 
 
+    @Override
     public List<FloorResp> findAll() {
-        final List<Floor> floors = floorRepository.findAll(Sort.by("id"));
+        final List<Floor> floors = floorRepository.findAll();
         return floors.stream()
                 .map(floor -> mapToDTO(floor, new FloorResp()))
                 .toList();
     }
 
+    @Override
+    public FloorResp save(FloorReq floorReq){
+        if(!isParkingValid(floorReq) || isCreated(floorReq))
+        {
+            throw new NotFoundException();
+        }
+        return mapToDTO(floorRepository.save(mapToEntity(floorReq,new Floor())),new FloorResp());
+    }
+
+    @Override
     public FloorResp get(final UUID id) {
         return floorRepository.findById(id)
                 .map(floor -> mapToDTO(floor, new FloorResp()))
                 .orElseThrow(NotFoundException::new);
     }
 
-    public UUID create(final @Valid FloorReq floorReq) {
-        return floorRepository.save(
-                mapToEntity(floorReq,new Floor())
-        ).getId();
+    @Override
+    public FloorResp update(FloorReq floorReq) {
+        final Floor floor = floorRepository.findById(floorReq.getId())
+                .orElseThrow(NotFoundException::new);
+        if(!isParkingValid(floorReq)) {
+            throw new NotFoundException();
+        }
+        mapToEntity(floorReq, floor);
+        return mapToDTO(floorRepository.save(floor),new FloorResp());
     }
 
-    public void update(final UUID id, final @Valid FloorReq floorReq) {
+    @Override
+    public void delete(final UUID id) {
         final Floor floor = floorRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
-        mapToEntity(floorReq, floor);
-        floorRepository.save(floor);
-    }
-
-    public void delete(final UUID id) {
         floorRepository.deleteById(id);
     }
 
@@ -67,9 +73,10 @@ public class FloorService implements IService<FloorReq,FloorResp,UUID> {
         floorResp.setId(floor.getId());
         floorResp.setNbr(floor.getNbr());
         floorResp.setParking(floor.getParking() == null ? null : floor.getParking().getId());
+
         floorResp.setParkingSpaces(
-        floor.getParkingSpaces().stream()
-                .map(parkingSpace -> { // This is the map function with lambda expression
+                floor.getParkingSpaces().stream()
+                .map(parkingSpace -> {
                     ParkingSpaceResp dto = new ParkingSpaceResp();
                     dto.setId(parkingSpace.getId());
                     dto.setNbr(parkingSpace.getNbr());
@@ -78,6 +85,7 @@ public class FloorService implements IService<FloorReq,FloorResp,UUID> {
                 })
                 .collect(Collectors.toList())
         );
+
         return floorResp;
     }
 
@@ -89,17 +97,13 @@ public class FloorService implements IService<FloorReq,FloorResp,UUID> {
         return floor;
     }
 
-    public ReferencedWarning getReferencedWarning(final UUID id) {
-        final ReferencedWarning referencedWarning = new ReferencedWarning();
-        final Floor floor = floorRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
-        final ParkingSpace floorParkingSpace = parkingSpaceRepository.findFirstByFloor(floor);
-        if (floorParkingSpace != null) {
-            referencedWarning.setKey("floor.parkingSpace.floor.referenced");
-            referencedWarning.addParam(floorParkingSpace.getId());
-            return referencedWarning;
-        }
-        return null;
+    private boolean isCreated(FloorReq floorReq){
+       Parking parking = new Parking();
+       parking.setId(floorReq.getParking());
+        return floorRepository.existsByNbrAndParking(floorReq.getNbr(),parking);
     }
 
+    private boolean isParkingValid(FloorReq floorReq){
+        return parkingRepository.existsById(floorReq.getParking());
+    }
 }

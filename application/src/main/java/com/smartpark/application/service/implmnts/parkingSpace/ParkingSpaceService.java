@@ -1,19 +1,17 @@
-package com.smartpark.application.service.parkingSpace;
+package com.smartpark.application.service.implmnts.parkingSpace;
 
 import com.smartpark.application.dto.parkingSpace.ParkingSpaceReq;
 import com.smartpark.application.dto.parkingSpace.ParkingSpaceResp;
 import com.smartpark.application.dto.reservation.ReservationResp;
 import com.smartpark.application.entity.Floor;
 import com.smartpark.application.entity.ParkingSpace;
-import com.smartpark.application.entity.Reservation;
 import com.smartpark.application.exception.NotFoundException;
-import com.smartpark.application.exception.ReferencedWarning;
 import com.smartpark.application.repository.FloorRepo;
 import com.smartpark.application.repository.ParkingSpaceRepo;
 import com.smartpark.application.repository.ReservationRepo;
-import com.smartpark.application.service.reservation.ReservationService;
+import com.smartpark.application.service.intrfaces.parkingspace.IParkingSpaceService;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Sort;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,17 +21,27 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class ParkingSpaceService {
+public class ParkingSpaceService implements IParkingSpaceService {
 
     private final ParkingSpaceRepo parkingSpaceRepository;
     private final FloorRepo floorRepository;
     private final ReservationRepo reservationRepository;
+    private final ModelMapper modelMapper;
 
     public List<ParkingSpaceResp> findAll() {
-        final List<ParkingSpace> parkingSpaces = parkingSpaceRepository.findAll(Sort.by("id"));
+        final List<ParkingSpace> parkingSpaces = parkingSpaceRepository.findAll();
         return parkingSpaces.stream()
                 .map(parkingSpace -> mapToDTO(parkingSpace, new ParkingSpaceResp()))
                 .toList();
+    }
+
+    @Override
+    public ParkingSpaceResp save(ParkingSpaceReq parkingSpaceReq) {
+        if(isCreated(parkingSpaceReq) || !isFloorValid(parkingSpaceReq))
+        {
+            throw new NotFoundException();
+        }
+        return mapToDTO(parkingSpaceRepository.save(mapToEntity(parkingSpaceReq,new ParkingSpace())),new ParkingSpaceResp());
     }
 
     public ParkingSpaceResp get(final UUID id) {
@@ -42,17 +50,16 @@ public class ParkingSpaceService {
                 .orElseThrow(NotFoundException::new);
     }
 
-    public UUID create(final ParkingSpaceReq parkingSpaceReq) {
-        final ParkingSpace parkingSpace = new ParkingSpace();
-        mapToEntity(parkingSpaceReq, parkingSpace);
-        return parkingSpaceRepository.save(parkingSpace).getId();
-    }
 
-    public void update(final UUID id, final ParkingSpaceReq parkingSpaceReq) {
-        final ParkingSpace parkingSpace = parkingSpaceRepository.findById(id)
+    public ParkingSpaceResp update(final ParkingSpaceReq parkingSpaceReq) {
+        final ParkingSpace parkingSpace = parkingSpaceRepository.findById(parkingSpaceReq.getId())
                 .orElseThrow(NotFoundException::new);
+        if(isCreated(parkingSpaceReq) || !isFloorValid(parkingSpaceReq))
+        {
+            throw new NotFoundException();
+        }
         mapToEntity(parkingSpaceReq, parkingSpace);
-        parkingSpaceRepository.save(parkingSpace);
+        return mapToDTO(parkingSpaceRepository.save(parkingSpace),new ParkingSpaceResp());
     }
 
     public void delete(final UUID id) {
@@ -87,17 +94,13 @@ public class ParkingSpaceService {
         return parkingSpace;
     }
 
-    public ReferencedWarning getReferencedWarning(final UUID id) {
-        final ReferencedWarning referencedWarning = new ReferencedWarning();
-        final ParkingSpace parkingSpace = parkingSpaceRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
-        final Reservation parkingSpaceReservation = reservationRepository.findFirstByParkingSpace(parkingSpace);
-        if (parkingSpaceReservation != null) {
-            referencedWarning.setKey("parkingSpace.reservation.parkingSpace.referenced");
-            referencedWarning.addParam(parkingSpaceReservation.getId());
-            return referencedWarning;
-        }
-        return null;
+    private boolean isCreated(ParkingSpaceReq parkingSpaceReq){
+        Floor floor = new Floor();
+        floor.setId(parkingSpaceReq.getFloor());
+        return parkingSpaceRepository.existsByNbrAndFloor(parkingSpaceReq.getNbr(),floor);
     }
 
+    private boolean isFloorValid(ParkingSpaceReq parkingSpaceReq){
+        return floorRepository.existsById(parkingSpaceReq.getFloor());
+    }
 }

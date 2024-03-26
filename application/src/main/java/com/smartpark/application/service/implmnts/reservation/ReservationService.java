@@ -1,4 +1,4 @@
-package com.smartpark.application.service.reservation;
+package com.smartpark.application.service.implmnts.reservation;
 
 
 import com.smartpark.application.dto.reservation.ReservationReq;
@@ -10,8 +10,9 @@ import com.smartpark.application.exception.NotFoundException;
 import com.smartpark.application.repository.ClientRepo;
 import com.smartpark.application.repository.ParkingSpaceRepo;
 import com.smartpark.application.repository.ReservationRepo;
-import com.smartpark.application.service.parkingSpace.ParkingSpaceService;
+import com.smartpark.application.service.intrfaces.reservation.IReservationService;
 import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -21,42 +22,46 @@ import java.util.UUID;
 
 @Service
 @AllArgsConstructor
-public class ReservationService {
+public class ReservationService implements IReservationService {
 
     private final ReservationRepo reservationRepository;
     private final ClientRepo clientRepository;
     private final ParkingSpaceRepo parkingSpaceRepository;
-    private final ParkingSpaceService parkingSpaceService;
 
     public List<ReservationResp> findAll() {
-        final List<Reservation> reservations = reservationRepository.findAll(Sort.by("id"));
+        final List<Reservation> reservations = reservationRepository.findAll();
         return reservations.stream()
                 .map(reservation -> mapToDTO(reservation, new ReservationResp()))
                 .toList();
     }
 
+    @Override
+    public ReservationResp save(ReservationReq reservationReq) {
+        if(!isParkingSpaceValid(reservationReq))
+        {
+            throw new NotFoundException();
+        }
+        isParkingSpaceAvailable(reservationReq);
+
+        final Reservation reservation = new Reservation();
+        mapToEntity(reservationReq, reservation);
+
+        return mapToDTO(reservationRepository.save(reservation),new ReservationResp());
+
+    }
+
+    @Override
     public ReservationResp get(final UUID id) {
         return reservationRepository.findById(id)
                 .map(reservation -> mapToDTO(reservation, new ReservationResp()))
                 .orElseThrow(NotFoundException::new);
     }
 
-    public UUID create(final ReservationReq reservationReq) {
-
-        isParkingSpaceAvailable(reservationReq);
-
-        final Reservation reservation = new Reservation();
-        mapToEntity(reservationReq, reservation);
-        return reservationRepository.save(reservation).getId();
-
+    @Override
+    public ReservationResp update(ReservationReq reservationReq) {
+        return null;
     }
 
-    public void update(final UUID id, final ReservationReq reservationReq) {
-        final Reservation reservation = reservationRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
-        mapToEntity(reservationReq, reservation);
-        reservationRepository.save(reservation);
-    }
 
     public void delete(final UUID id) {
         reservationRepository.deleteById(id);
@@ -88,9 +93,7 @@ public class ReservationService {
 
     private boolean isParkingSpaceAvailable(ReservationReq reservationReq){
 
-        ParkingSpace parkingSpace = new ParkingSpace();
-        parkingSpace.setId(reservationReq.getParkingSpace());
-        List<Reservation> parkingSpaceReservations = reservationRepository.findAllByParkingSpace(parkingSpace);
+        List<Reservation> parkingSpaceReservations = reservationRepository.findAllByParkingSpaceId(reservationReq.getParkingSpace());
 
         for (Reservation reservation :parkingSpaceReservations) {
 
@@ -104,6 +107,10 @@ public class ReservationService {
 
 
         return true;
+    }
+
+    private boolean isParkingSpaceValid(ReservationReq reservationReq){
+        return parkingSpaceRepository.existsById(reservationReq.getParkingSpace());
     }
 
 }

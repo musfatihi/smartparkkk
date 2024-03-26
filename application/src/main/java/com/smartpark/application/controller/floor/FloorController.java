@@ -2,9 +2,7 @@ package com.smartpark.application.controller.floor;
 
 import com.smartpark.application.dto.floor.FloorReq;
 import com.smartpark.application.dto.floor.FloorResp;
-import com.smartpark.application.exception.ReferencedException;
-import com.smartpark.application.exception.ReferencedWarning;
-import com.smartpark.application.service.floor.FloorService;
+import com.smartpark.application.service.intrfaces.floor.IFloorService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -23,7 +21,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class FloorController {
 
-    private final FloorService floorService;
+    private final IFloorService floorService;
 
     @GetMapping
     public ResponseEntity<List<FloorResp>> getAllFloors() {
@@ -37,27 +35,20 @@ public class FloorController {
 
     @PostMapping
     @ApiResponse(responseCode = "201")
-    public ResponseEntity<UUID> createFloor(@RequestBody @Valid final FloorReq floorReq) {
-        final UUID createdId = floorService.create(floorReq);
-        return new ResponseEntity<>(createdId, HttpStatus.CREATED);
+    public ResponseEntity<FloorResp> createFloor(@RequestBody @Valid final FloorReq floorReq) {
+        return new ResponseEntity<>( floorService.save(floorReq), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<UUID> updateFloor(@PathVariable(name = "id") final UUID id,
-            @RequestBody @Valid final FloorReq floorReq) {
-        floorService.update(id, floorReq);
-        return ResponseEntity.ok(id);
+    @PutMapping()
+    public ResponseEntity<FloorResp> updateFloor(@RequestBody @Valid final FloorReq floorReq) {
+        return new ResponseEntity<>(floorService.update(floorReq),HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
     @ApiResponse(responseCode = "204")
-    public ResponseEntity<Void> deleteFloor(@PathVariable(name = "id") final UUID id) {
-        final ReferencedWarning referencedWarning = floorService.getReferencedWarning(id);
-        if (referencedWarning != null) {
-            throw new ReferencedException(referencedWarning);
-        }
+    public ResponseEntity<String> deleteFloor(@PathVariable(name = "id") final UUID id) {
         floorService.delete(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok("Floor deleted successfully");
     }
 
 }

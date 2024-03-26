@@ -12,10 +12,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class Client extends User{
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
 
     @OneToMany(mappedBy = "client")
-    private Set<Reservation> reservations;
+    private Set<Reservation> reservations = Set.of();
 }

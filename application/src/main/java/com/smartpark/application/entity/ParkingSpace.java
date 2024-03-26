@@ -21,13 +21,13 @@ public class ParkingSpace {
     @Column(nullable = false)
     private String nbr;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "floor_id", nullable = false)
     private Floor floor;
 
     private Types type;
 
     @OneToMany(mappedBy = "parkingSpace")
-    private Set<Reservation> reservations;
+    private Set<Reservation> reservations = Set.of();
 
 }

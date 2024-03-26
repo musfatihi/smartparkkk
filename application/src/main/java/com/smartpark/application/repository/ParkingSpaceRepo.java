@@ -11,4 +11,5 @@ import java.util.UUID;
 public interface ParkingSpaceRepo extends JpaRepository<ParkingSpace, UUID> {
     ParkingSpace findFirstByFloor(Floor floor);
 
+    boolean existsByNbrAndFloor(String nbr, Floor floor);
 }

@@ -1,11 +1,8 @@
 package com.smartpark.application.controller.parking;
 
-import com.smartpark.application.dto.client.ClientReq;
-import com.smartpark.application.dto.client.ClientResp;
 import com.smartpark.application.dto.parking.ParkingReq;
 import com.smartpark.application.dto.parking.ParkingResp;
-import com.smartpark.application.service.client.ClientService;
-import com.smartpark.application.service.parking.ParkingService;
+import com.smartpark.application.service.intrfaces.parking.IParkingService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +17,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class ParkingController {
 
-    private ParkingService parkingService;
+    private IParkingService parkingService;
 
     @GetMapping()
     public ResponseEntity<List<ParkingResp>> getParkings()
@@ -40,6 +37,14 @@ public class ParkingController {
     {
         return ResponseEntity.ok(
                 parkingService.save(parkingReq)
+        );
+    }
+
+    @PutMapping()
+    public ResponseEntity<ParkingResp> updateParking(@RequestBody @Valid ParkingReq parkingReq)
+    {
+        return ResponseEntity.ok(
+                parkingService.update(parkingReq)
         );
     }
 

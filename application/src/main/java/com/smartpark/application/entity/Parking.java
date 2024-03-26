@@ -23,6 +23,6 @@ public class Parking {
     @Column(nullable = false)
     private String city;
 
-    @OneToMany(mappedBy = "parking")
-    private Set<Floor> floors;
+    @OneToMany(mappedBy = "parking",fetch = FetchType.EAGER)
+    private Set<Floor> floors = Set.of();
 }

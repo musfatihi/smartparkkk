@@ -1,9 +1,7 @@
 package com.smartpark.application.controller.client;
 
 import com.smartpark.application.dto.client.ClientResp;
-import com.smartpark.application.exception.ReferencedException;
-import com.smartpark.application.exception.ReferencedWarning;
-import com.smartpark.application.service.client.ClientService;
+import com.smartpark.application.service.intrfaces.client.IClientService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
@@ -20,7 +18,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class ClientController {
 
-    private final ClientService clientService;
+    private final IClientService clientService;
 
     @GetMapping
     public ResponseEntity<List<ClientResp>> getAllClients() {
@@ -32,14 +30,9 @@ public class ClientController {
         return ResponseEntity.ok(clientService.get(id));
     }
 
-
     @DeleteMapping("/{id}")
     @ApiResponse(responseCode = "204")
     public ResponseEntity<Void> deleteClient(@PathVariable(name = "id") final UUID id) {
-        final ReferencedWarning referencedWarning = clientService.getReferencedWarning(id);
-        if (referencedWarning != null) {
-            throw new ReferencedException(referencedWarning);
-        }
         clientService.delete(id);
         return ResponseEntity.noContent().build();
     }

@@ -2,7 +2,7 @@ package com.smartpark.application.controller.admin;
 
 import com.smartpark.application.dto.admin.AdminReq;
 import com.smartpark.application.dto.admin.AdminResp;
-import com.smartpark.application.service.admin.AdminService;
+import com.smartpark.application.service.intrfaces.admin.IAdminService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -21,7 +21,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class AdminController {
 
-    private final AdminService adminService;
+    private final IAdminService adminService;
 
     @GetMapping
     public ResponseEntity<List<AdminResp>> getAllAdmins() {
@@ -35,9 +35,8 @@ public class AdminController {
 
     @PostMapping
     @ApiResponse(responseCode = "201")
-    public ResponseEntity<UUID> createAdmin(@RequestBody @Valid final AdminReq adminReq) {
-        final UUID createdId = adminService.create(adminReq);
-        return new ResponseEntity<>(createdId, HttpStatus.CREATED);
+    public ResponseEntity<AdminResp> createAdmin(@RequestBody @Valid final AdminReq adminReq) {
+        return new ResponseEntity<>(adminService.save(adminReq), HttpStatus.CREATED);
     }
 
 

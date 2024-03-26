@@ -1,8 +1,20 @@
 import React from 'react';
 import logo from '../assets/imgs/logo.png';
 import { Link } from 'react-router-dom';
+import {logout} from "../redux/actions/authActions";
+import {useAppDispatch} from "../redux/store/store";
+
+
 
 function Navbar() {
+
+    const dispatch = useAppDispatch();
+
+    const lougout = async () => {
+        dispatch(logout());
+    };
+
+
     return (
         <header className="relative">
             <div className="container px-6 py-6 mx-auto lg:flex lg:items-center lg:justify-between">
@@ -47,9 +59,12 @@ function Navbar() {
                             </a>
                         </Link>
                         <Link to="/test">
-                            <a className="px-8 py-2.5 text-white lg:text-[#475F45] lg:hover:bg-[#475F45] lg:hover:text-white duration-300 transition-colors font-medium lg:mx-4 border-2 lg:border-[#475F45] border-white" href="#">Reserve Place</a>
+                            <a className="px-8 py-2.5 text-white lg:text-[#475F45] lg:hover:bg-[#475F45] lg:hover:text-white duration-300 transition-colors font-medium lg:mx-4 border-2 lg:border-[#475F45] border-white"
+                               href="#">Reserve Place</a>
                         </Link>
-
+                        <div onClick={lougout} className="font-medium text-white lg:text-[#475F45] lg:hover:text-gray-400 lg:mx-4">
+                            Log out
+                        </div>
 
                     </nav>
                 </div>

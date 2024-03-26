@@ -23,11 +23,11 @@ public class Reservation {
     @Column(nullable = false)
     private LocalDateTime rTo;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "client_id", nullable = false)
     private Client client;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "parking_space_id", nullable = false)
     private ParkingSpace parkingSpace;
 

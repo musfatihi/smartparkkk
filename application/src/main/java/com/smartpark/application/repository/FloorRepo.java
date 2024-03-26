@@ -10,4 +10,6 @@ import java.util.UUID;
 public interface FloorRepo extends JpaRepository<Floor, UUID> {
 
     Floor findFirstByParking(Parking parking);
+
+    boolean existsByNbrAndParking(Integer nbr, Parking parking);
 }

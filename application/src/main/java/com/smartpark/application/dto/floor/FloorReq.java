@@ -10,6 +10,8 @@ import java.util.UUID;
 @Setter
 public class FloorReq {
 
+    private UUID id;
+
     @PositiveOrZero
     private Integer nbr;
 

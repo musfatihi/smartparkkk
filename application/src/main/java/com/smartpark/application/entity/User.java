@@ -19,6 +19,10 @@ import java.util.UUID;
 @MappedSuperclass
 public abstract class User implements UserDetails {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
+
     private String email;
 
     private String password;
