@@ -12,6 +12,7 @@ import com.smartpark.application.repository.ParkingSpaceRepo;
 import com.smartpark.application.repository.ReservationRepo;
 import com.smartpark.application.service.intrfaces.reservation.IReservationService;
 import lombok.AllArgsConstructor;
+import org.apache.coyote.BadRequestException;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -37,6 +38,10 @@ public class ReservationService implements IReservationService {
 
     @Override
     public ReservationResp save(ReservationReq reservationReq) {
+        if(!isReservationRequestTimeRangeValid(reservationReq))
+        {
+            throw new NotFoundException();
+        }
         if(!isParkingSpaceValid(reservationReq))
         {
             throw new NotFoundException();
@@ -111,6 +116,10 @@ public class ReservationService implements IReservationService {
 
     private boolean isParkingSpaceValid(ReservationReq reservationReq){
         return parkingSpaceRepository.existsById(reservationReq.getParkingSpace());
+    }
+
+    private boolean isReservationRequestTimeRangeValid(ReservationReq reservationReq){
+        return reservationReq.getRTo().isAfter(reservationReq.getRFrom());
     }
 
 }

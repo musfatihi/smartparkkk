@@ -6,9 +6,14 @@ import jakarta.validation.constraints.Email;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @Getter
 @Setter
 public class ClientReq {
+
+    private UUID id;
+
     @Email
     private String email;
 

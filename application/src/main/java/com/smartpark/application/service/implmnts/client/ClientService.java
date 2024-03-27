@@ -6,10 +6,9 @@ import com.smartpark.application.dto.reservation.ReservationResp;
 import com.smartpark.application.entity.Client;
 import com.smartpark.application.exception.NotFoundException;
 import com.smartpark.application.repository.ClientRepo;
-import com.smartpark.application.repository.ReservationRepo;
 import com.smartpark.application.service.intrfaces.client.IClientService;
 import lombok.AllArgsConstructor;
-import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,10 +20,9 @@ import java.util.stream.Collectors;
 public class ClientService implements IClientService {
 
     private ClientRepo clientRepo;
-    private ReservationRepo reservationRepo;
-    private ModelMapper modelMapper;
+    private PasswordEncoder passwordEncoder;
 
-    //@PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @Override
     public List<ClientResp> findAll(){
         final List<Client> clients = clientRepo.findAll();
         return clients.stream()
@@ -38,10 +36,14 @@ public class ClientService implements IClientService {
     }
 
 
+    @Override
     public void delete(UUID id){
+        clientRepo.findById(id)
+                .orElseThrow(NotFoundException::new);
         clientRepo.deleteById(id);
     }
 
+    @Override
     public ClientResp get(final UUID id) {
         return clientRepo.findById(id)
                 .map(client -> mapToDTO(client, new ClientResp()))
@@ -50,10 +52,10 @@ public class ClientService implements IClientService {
 
     @Override
     public ClientResp update(ClientReq clientReq) {
-        return null;
+        Client client = clientRepo.findById(clientReq.getId())
+                .orElseThrow(NotFoundException::new);
+        return mapToDTO(clientRepo.save(mapToEntity(clientReq,client)),new ClientResp());
     }
-
-
 
     private ClientResp mapToDTO(final Client client, final ClientResp clientResp) {
         clientResp.setId(client.getId());
@@ -73,12 +75,11 @@ public class ClientService implements IClientService {
 
     private Client mapToEntity(final ClientReq clientReq, final Client client) {
         client.setEmail(clientReq.getEmail());
-        client.setPassword(clientReq.getPassword());
+        client.setPassword(passwordEncoder.encode(clientReq.getPasswordForm().getPassword()));
         return client;
     }
 
     public boolean emailExists(final String email) {
         return clientRepo.existsByEmailIgnoreCase(email);
     }
-
 }

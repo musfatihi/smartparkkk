@@ -39,6 +39,11 @@ public class AdminController {
         return new ResponseEntity<>(adminService.save(adminReq), HttpStatus.CREATED);
     }
 
+    @PutMapping
+    @ApiResponse(responseCode = "201")
+    public ResponseEntity<AdminResp> updateAdmin(@RequestBody @Valid final AdminReq adminReq) {
+        return new ResponseEntity<>(adminService.update(adminReq), HttpStatus.CREATED);
+    }
 
     @DeleteMapping("/{id}")
     @ApiResponse(responseCode = "204")
