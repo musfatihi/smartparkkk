@@ -1,9 +1,8 @@
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
-import { createParking,updateParking,getParkings} from "../../../redux/actions/parkingActions";
+import {getParkings} from "../../../redux/actions/parkingActions";
 import {useAppDispatch} from "../../../redux/store/store";
-import {Parking} from "../../../intrfcs/parking/parking";
 import {Floor} from "../../../intrfcs/floor/floor";
 import {useSelector} from "react-redux";
 import {RootState} from "../../../redux/reducers/RootState";
@@ -17,8 +16,10 @@ interface FloorDialogProps {
 }
 
 const FloorDialog: React.FC<FloorDialogProps> = ({ visible, onHide, refreshData, selectedFloor }) => {
+
     const dispatch = useAppDispatch();
     const { parkings } = useSelector((state: RootState) => state.parking);
+
     const [floorData, setFloorData] = useState<Partial<Floor>>({ nbr: 0 });
 
     useEffect(() => {

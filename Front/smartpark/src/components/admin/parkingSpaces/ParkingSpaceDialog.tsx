@@ -77,7 +77,7 @@ const ParkingSpaceDialog: React.FC<ParkingSpaceDialogProps> = ({ visible, onHide
                 >
                     <option value="">Select a parking</option>
                     {floors.map(floor => (
-                        <option key={floor.id} value={floor.id}>{floor.id}</option>
+                        <option key={floor.id} value={floor.id}>{floor.parkingName}-{floor.nbr}</option>
                     ))}
                 </select>
             </div>

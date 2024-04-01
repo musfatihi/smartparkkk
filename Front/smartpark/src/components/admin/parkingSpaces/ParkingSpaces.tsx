@@ -42,9 +42,9 @@ const ParkingSpaces: React.FC = () => {
             <DataTable value={parkingSpaces} loading={loading} loadingIcon="pi pi-spinner" paginator rows={5} rowsPerPageOptions={[5, 10, 25, 50]}
                        paginatorTemplate="FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink RowsPerPageDropdown"
                        currentPageReportTemplate="{first} to {last} of {totalRecords}">
-                <Column field="id" header="PARKING SPACE ID"></Column>
-                <Column field="nbr" header="PARKING SPACE NBR"></Column>
-                <Column field="floor" header="FLOOR ID"></Column>
+                <Column field="nbr" header="Parking Space Nbr"></Column>
+                <Column field="floorNbr" header="Floor NBR"></Column>
+                <Column field="parkingName" header="Parking Name"></Column>
                 <Column header="Actions" headerStyle={{ width: '8rem' }} body={(rowData: ParkingSpace) => (
 
                     <div className='flex'>

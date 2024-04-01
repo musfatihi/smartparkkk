@@ -29,10 +29,9 @@ const ApiParking = {
         }
     },
 
-    async updateParking(parkingId: string, parkingData: any) {
+    async updateParking(parkingData: any) {
         try {
-            await axios.put(`${API_URL}/${parkingId}`, parkingData
-            );
+            await axios.put(`${API_URL}`, parkingData);
         }
         catch (error) {
             return error;

@@ -22,7 +22,7 @@ const withGuard = (WrappedComponent: React.ComponentType<any>) => {
 
     if (allowedRoles.includes(userRole)) {
       return <WrappedComponent {...props} />;
-    } else {
+    } else{
       return <Navigate to="/error" replace />;
     }
   };

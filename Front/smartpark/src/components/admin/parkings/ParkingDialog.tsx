@@ -4,6 +4,7 @@ import { Button } from 'primereact/button';
 import { createParking,updateParking,getParkings} from "../../../redux/actions/parkingActions";
 import {useAppDispatch} from "../../../redux/store/store";
 import {Parking} from "../../../intrfcs/parking/parking";
+import {showSuccessAlert} from "../../../utils/sweetAlertUtils";
 
 interface ParkingDialogProps {
     visible: boolean;
@@ -35,13 +36,15 @@ const ParkingDialog: React.FC<ParkingDialogProps> = ({ visible, onHide, refreshD
             if (!selectedParking) {
                 await dispatch(createParking(parkingData));
             } else {
-                await dispatch(updateParking(selectedParking.id, parkingData));
+                await dispatch(updateParking(parkingData));
             }
             onHide();
             refreshData();
             dispatch(getParkings());
+            showSuccessAlert("Parking Added successfully","Done")
+
         } catch (error) {
-            console.error('Error saving city:', error);
+            console.error('Error saving parking:', error);
         }
     };
 

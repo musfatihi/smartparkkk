@@ -1,10 +1,8 @@
-import  image  from '../assets/imgs/maroc.webp';
 import t1 from '../assets/imgs/t1.jpg';
 import t2 from '../assets/imgs/t2.jpg';
-import fifa from '../assets/imgs/fifa.jpg';
-import lfna from '../assets/imgs/jamaa-el-fna.jpg';
 import hakimi from '../assets/imgs/hakimi.jpg';
 import maroc from '../assets/imgs/marocwin.jpg';
+import parking_ from '../assets/imgs/parking/parking_.jpg';
 
 function home() {
     return (
@@ -17,7 +15,7 @@ function home() {
 
                     <div className="mt-6 sm:flex sm:items-center">
                         <a href="#" className="bg-[#475F45] hover:bg-[#475F45]/80 duration-300 transition-colors border-2 border-[#475F45] px-6 block text-center py-3 uppercase text-sm font-bold leading-4 tracking-widest text-white ">
-                            Buy Tickets
+                            Book Your Place
                         </a>
 
                         <a href="#" className="border-2 text-sm duration-300 transition-colors hover:bg-[#475F45] hover:text-white font-bold leading-4 mt-4 sm:mt-0 tracking-widest text-[#475F45] sm:mx-4 border-[#475F45] px-6 block text-center py-3 uppercase">
@@ -27,33 +25,10 @@ function home() {
                 </div>
 
                 <div className="h-[38rem] mt-12 lg:mt-0 w-full mx-auto max-w-md overflow-hidden rounded-t-full outline outline-4 outline-offset-4 outline-[#475F45]/40">
-                    <img className="object-cover w-full h-full rounded-t-full " src={fifa} alt="main page" />
+                    <img className="object-cover w-full h-full rounded-t-full " src={parking_} alt="main page" />
                 </div>
             </div>
 
-            <div className="bg-[#343D33] mt-12">
-                <div className="container flex flex-col px-6 py-16 mx-auto mt-12">
-                    <div className="order-2 mt-8 lg:order-1 lg:mt-0 lg:flex lg:items-center lg:-mx-6">
-                        <img className="object-cover w-full lg:w-1/2 lg:mx-6 h-72 lg:h-96" src={image} alt="description" />
-                        <div className="mt-8 lg:w-1/2 lg:mx-6 lg:mt-0">
-                            <h3 className="font-serif text-2xl text-white capitalize md:text-4xl lg:text-5xl">
-                                Discover yourself with nature
-                            </h3>
-
-                            <p className="mt-4 text-gray-200 ">
-                                Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam, nisi fugiat dicta impedit sed quisquam quas veritatis consectetur neque saepe, autem facilis dolore officiis minima explicabo perferendis ab porro magnam!
-                            </p>
-
-                            <a className="inline-flex px-6 py-3 mt-6 text-white border-2 border-white hover:bg-[#475F45] duration-300 transition-colors" href="#">
-                                Learn More
-                            </a>
-                        </div>
-                    </div>
-
-                    <img className="order-1 object-cover lg:order-2 w-ful h-72 lg:h-96 lg:mt-12" src={lfna} alt="main page" />
-
-                </div>
-            </div>
             <section className="container px-6 py-12 mx-auto lg:py-16">
                 <h3 className="font-serif text-3xl text-[#343D33] capitalize md:text-4xl lg:text-5xl">
                     News & Updates

@@ -1,5 +1,4 @@
 import React from 'react';
-import logo from '../assets/imgs/logo.png';
 
 
 function Footer() {
@@ -8,9 +7,6 @@ function Footer() {
     <div className="container px-6 py-8 mx-auto space-y-8 lg:space-y-0 lg:flex lg:justify-between">
       <div>
         <a className="flex items-center -mx-2" href="#">
-          <img className="w-8 h-8 mx-1 sm:h-10 sm:w-10 rounded-full" src={logo} alt="logo" />
-
-
           <div className="mx-2 text-white">
             <h3 className="font-medium tracking-widest uppercase">SmartPark</h3>
             <p className="mt-1 text-xs italic leading-3 tracking-wide capitalize"></p>
@@ -66,7 +62,7 @@ function Footer() {
     </div>
     
     <p className="w-full py-6 mx-auto text-white text-center bg-[#343D33]">
-      &copy; 2024 Mustapha FATIHI. All rights reserved.
+      &copy; 2024 Mustapha FATIHI.
     </p>
   </footer>
   )

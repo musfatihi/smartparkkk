@@ -38,10 +38,10 @@ export const createParking = (parkingData: any) => {
     };
 };
 
-export const updateParking = (parkingId: string, parkingData: any) => {
+export const updateParking = (parkingData: any) => {
     return async (dispatch: Dispatch) => {
         try {
-            const updatedParking = await ApiParking.updateParking(parkingId, parkingData);
+            const updatedParking = await ApiParking.updateParking(parkingData);
             dispatch({ type: UPDATE_PARKING, payload: updatedParking });
         } catch (error) {
             console.error("Error updating parking:", error);
