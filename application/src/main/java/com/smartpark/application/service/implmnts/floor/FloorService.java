@@ -6,11 +6,13 @@ import com.smartpark.application.dto.parkingSpace.ParkingSpaceResp;
 import com.smartpark.application.entity.Floor;
 import com.smartpark.application.entity.Parking;
 import com.smartpark.application.exception.NotFoundException;
+import com.smartpark.application.exception.NotValidDataException;
 import com.smartpark.application.repository.FloorRepo;
 import com.smartpark.application.repository.ParkingRepo;
 import com.smartpark.application.repository.ParkingSpaceRepo;
 import com.smartpark.application.service.intrfaces.floor.IFloorService;
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,6 +30,7 @@ public class FloorService implements IFloorService {
 
 
     @Override
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public List<FloorResp> findAll() {
         final List<Floor> floors = floorRepository.findAll();
         return floors.stream()
@@ -36,15 +39,17 @@ public class FloorService implements IFloorService {
     }
 
     @Override
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public FloorResp save(FloorReq floorReq){
         if(!isParkingValid(floorReq) || isCreated(floorReq))
         {
-            throw new NotFoundException();
+            throw new NotValidDataException();
         }
         return mapToDTO(floorRepository.save(mapToEntity(floorReq,new Floor())),new FloorResp());
     }
 
     @Override
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public FloorResp get(final UUID id) {
         return floorRepository.findById(id)
                 .map(floor -> mapToDTO(floor, new FloorResp()))
@@ -52,19 +57,21 @@ public class FloorService implements IFloorService {
     }
 
     @Override
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public FloorResp update(FloorReq floorReq) {
         final Floor floor = floorRepository.findById(floorReq.getId())
                 .orElseThrow(NotFoundException::new);
         if(!isParkingValid(floorReq)) {
-            throw new NotFoundException();
+            throw new NotValidDataException();
         }
         mapToEntity(floorReq, floor);
         return mapToDTO(floorRepository.save(floor),new FloorResp());
     }
 
     @Override
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public void delete(final UUID id) {
-        final Floor floor = floorRepository.findById(id)
+        floorRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
         floorRepository.deleteById(id);
     }
@@ -73,6 +80,7 @@ public class FloorService implements IFloorService {
         floorResp.setId(floor.getId());
         floorResp.setNbr(floor.getNbr());
         floorResp.setParking(floor.getParking() == null ? null : floor.getParking().getId());
+        floorResp.setParkingName(floor.getParking() == null ? null : floor.getParking().getName());
 
         floorResp.setParkingSpaces(
                 floor.getParkingSpaces().stream()

@@ -13,5 +13,7 @@ public class ParkingSpaceResp {
     private UUID id;
     private String nbr;
     private UUID floor;
+    private int floorNbr;
+    private String parkingName;
     private List<ReservationResp> reservations;
 }

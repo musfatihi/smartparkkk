@@ -59,7 +59,7 @@ public @interface ClientEmailUnique {
                 // value hasn't changed
                 return true;
             }
-            return !clientService.emailExists(value);
+            return clientService.emailDoesntExist(value);
         }
 
     }

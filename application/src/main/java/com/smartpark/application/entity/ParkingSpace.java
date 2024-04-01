@@ -27,7 +27,7 @@ public class ParkingSpace {
 
     private Types type;
 
-    @OneToMany(mappedBy = "parkingSpace")
+    @OneToMany(mappedBy = "parkingSpace",cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Reservation> reservations = Set.of();
 
 }

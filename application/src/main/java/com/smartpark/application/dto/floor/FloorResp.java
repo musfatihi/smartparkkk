@@ -18,6 +18,8 @@ public class FloorResp {
 
     private UUID parking;
 
+    private String parkingName;
+
     private List<ParkingSpaceResp> parkingSpaces;
 
 }

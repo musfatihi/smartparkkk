@@ -13,6 +13,6 @@ import java.util.UUID;
 @Setter
 public class Client extends User{
 
-    @OneToMany(mappedBy = "client")
+    @OneToMany(mappedBy = "client",cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Reservation> reservations = Set.of();
 }

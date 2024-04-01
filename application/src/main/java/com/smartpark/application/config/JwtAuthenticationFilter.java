@@ -1,8 +1,8 @@
 package com.smartpark.application.config;
 
 
-import com.smartpark.application.security.services.JwtService;
-import com.smartpark.application.security.services.UserDetailsServiceImp;
+import com.smartpark.application.service.implmnts.security.JwtService;
+import com.smartpark.application.service.implmnts.security.UserDetailsServiceImp;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

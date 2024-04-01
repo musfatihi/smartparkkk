@@ -8,6 +8,7 @@ import com.smartpark.application.exception.NotFoundException;
 import com.smartpark.application.repository.ClientRepo;
 import com.smartpark.application.service.intrfaces.client.IClientService;
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,7 @@ public class ClientService implements IClientService {
     private PasswordEncoder passwordEncoder;
 
     @Override
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public List<ClientResp> findAll(){
         final List<Client> clients = clientRepo.findAll();
         return clients.stream()
@@ -37,6 +39,7 @@ public class ClientService implements IClientService {
 
 
     @Override
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public void delete(UUID id){
         clientRepo.findById(id)
                 .orElseThrow(NotFoundException::new);
@@ -44,6 +47,7 @@ public class ClientService implements IClientService {
     }
 
     @Override
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_CLIENT')")
     public ClientResp get(final UUID id) {
         return clientRepo.findById(id)
                 .map(client -> mapToDTO(client, new ClientResp()))
@@ -51,6 +55,7 @@ public class ClientService implements IClientService {
     }
 
     @Override
+    @PreAuthorize("hasAnyAuthority('ROLE_CLIENT')")
     public ClientResp update(ClientReq clientReq) {
         Client client = clientRepo.findById(clientReq.getId())
                 .orElseThrow(NotFoundException::new);
@@ -79,7 +84,8 @@ public class ClientService implements IClientService {
         return client;
     }
 
-    public boolean emailExists(final String email) {
-        return clientRepo.existsByEmailIgnoreCase(email);
+    public boolean emailDoesntExist(final String email) {
+        return !clientRepo.existsByEmailIgnoreCase(email);
     }
+
 }

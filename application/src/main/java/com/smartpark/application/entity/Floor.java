@@ -24,7 +24,7 @@ public class Floor {
     @JoinColumn(name = "parking_id", nullable = false)
     private Parking parking;
 
-    @OneToMany(mappedBy = "floor",fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "floor",fetch = FetchType.EAGER,cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ParkingSpace> parkingSpaces = Set.of();
 
 }

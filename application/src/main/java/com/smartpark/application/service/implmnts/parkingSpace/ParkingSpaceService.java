@@ -6,12 +6,12 @@ import com.smartpark.application.dto.reservation.ReservationResp;
 import com.smartpark.application.entity.Floor;
 import com.smartpark.application.entity.ParkingSpace;
 import com.smartpark.application.exception.NotFoundException;
+import com.smartpark.application.exception.NotValidDataException;
 import com.smartpark.application.repository.FloorRepo;
 import com.smartpark.application.repository.ParkingSpaceRepo;
-import com.smartpark.application.repository.ReservationRepo;
 import com.smartpark.application.service.intrfaces.parkingspace.IParkingSpaceService;
 import lombok.AllArgsConstructor;
-import org.modelmapper.ModelMapper;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,9 +25,9 @@ public class ParkingSpaceService implements IParkingSpaceService {
 
     private final ParkingSpaceRepo parkingSpaceRepository;
     private final FloorRepo floorRepository;
-    private final ReservationRepo reservationRepository;
-    private final ModelMapper modelMapper;
 
+    @Override
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public List<ParkingSpaceResp> findAll() {
         final List<ParkingSpace> parkingSpaces = parkingSpaceRepository.findAll();
         return parkingSpaces.stream()
@@ -36,14 +36,17 @@ public class ParkingSpaceService implements IParkingSpaceService {
     }
 
     @Override
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ParkingSpaceResp save(ParkingSpaceReq parkingSpaceReq) {
         if(isCreated(parkingSpaceReq) || !isFloorValid(parkingSpaceReq))
         {
-            throw new NotFoundException();
+            throw new NotValidDataException();
         }
         return mapToDTO(parkingSpaceRepository.save(mapToEntity(parkingSpaceReq,new ParkingSpace())),new ParkingSpaceResp());
     }
 
+    @Override
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ParkingSpaceResp get(final UUID id) {
         return parkingSpaceRepository.findById(id)
                 .map(parkingSpace -> mapToDTO(parkingSpace, new ParkingSpaceResp()))
@@ -51,17 +54,21 @@ public class ParkingSpaceService implements IParkingSpaceService {
     }
 
 
+    @Override
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ParkingSpaceResp update(final ParkingSpaceReq parkingSpaceReq) {
         final ParkingSpace parkingSpace = parkingSpaceRepository.findById(parkingSpaceReq.getId())
                 .orElseThrow(NotFoundException::new);
         if(isCreated(parkingSpaceReq) || !isFloorValid(parkingSpaceReq))
         {
-            throw new NotFoundException();
+            throw new NotValidDataException();
         }
         mapToEntity(parkingSpaceReq, parkingSpace);
         return mapToDTO(parkingSpaceRepository.save(parkingSpace),new ParkingSpaceResp());
     }
 
+    @Override
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public void delete(final UUID id) {
         parkingSpaceRepository.deleteById(id);
     }
@@ -70,7 +77,9 @@ public class ParkingSpaceService implements IParkingSpaceService {
                                      final ParkingSpaceResp parkingSpaceResp) {
         parkingSpaceResp.setId(parkingSpace.getId());
         parkingSpaceResp.setNbr(parkingSpace.getNbr());
-        parkingSpaceResp.setFloor(parkingSpace.getFloor() == null ? null : parkingSpace.getFloor().getId());
+        parkingSpaceResp.setFloor(parkingSpace.getFloor().getId());
+        parkingSpaceResp.setFloorNbr(parkingSpace.getFloor().getNbr());
+        parkingSpaceResp.setParkingName(parkingSpace.getFloor().getParking().getName());
         parkingSpaceResp.setReservations(
                 parkingSpace.getReservations().stream().map(reservation -> {
                     ReservationResp reservationResp = new ReservationResp();

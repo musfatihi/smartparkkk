@@ -7,14 +7,14 @@ import com.smartpark.application.entity.Client;
 import com.smartpark.application.entity.ParkingSpace;
 import com.smartpark.application.entity.Reservation;
 import com.smartpark.application.exception.NotFoundException;
+import com.smartpark.application.exception.NotValidDataException;
 import com.smartpark.application.repository.ClientRepo;
 import com.smartpark.application.repository.ParkingSpaceRepo;
 import com.smartpark.application.repository.ReservationRepo;
 import com.smartpark.application.service.intrfaces.reservation.IReservationService;
 import lombok.AllArgsConstructor;
-import org.apache.coyote.BadRequestException;
-import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,6 +29,8 @@ public class ReservationService implements IReservationService {
     private final ClientRepo clientRepository;
     private final ParkingSpaceRepo parkingSpaceRepository;
 
+    @Override
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public List<ReservationResp> findAll() {
         final List<Reservation> reservations = reservationRepository.findAll();
         return reservations.stream()
@@ -36,16 +38,22 @@ public class ReservationService implements IReservationService {
                 .toList();
     }
 
+    @PreAuthorize("hasAnyAuthority('ROLE_CLIENT')")
+    public List<ReservationResp> findMyReservations(UUID idClient) {
+        final List<Reservation> reservations = reservationRepository.findAllByClientId(idClient);
+        return reservations.stream()
+                .map(reservation -> mapToDTO(reservation, new ReservationResp()))
+                .toList();
+    }
+
     @Override
+    @PreAuthorize("hasAnyAuthority('ROLE_CLIENT')")
     public ReservationResp save(ReservationReq reservationReq) {
-        if(!isReservationRequestTimeRangeValid(reservationReq))
+        if(!isReservationRequestTimeRangeValid(reservationReq) || !isParkingSpaceValid(reservationReq))
         {
-            throw new NotFoundException();
+            throw new NotValidDataException();
         }
-        if(!isParkingSpaceValid(reservationReq))
-        {
-            throw new NotFoundException();
-        }
+
         isParkingSpaceAvailable(reservationReq);
 
         final Reservation reservation = new Reservation();
@@ -56,6 +64,7 @@ public class ReservationService implements IReservationService {
     }
 
     @Override
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ReservationResp get(final UUID id) {
         return reservationRepository.findById(id)
                 .map(reservation -> mapToDTO(reservation, new ReservationResp()))
@@ -68,7 +77,11 @@ public class ReservationService implements IReservationService {
     }
 
 
+    @Override
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public void delete(final UUID id) {
+        reservationRepository.findById(id)
+                .orElseThrow(NotFoundException::new);
         reservationRepository.deleteById(id);
     }
 
@@ -79,6 +92,10 @@ public class ReservationService implements IReservationService {
         reservationResp.setRTo(reservation.getRTo());
         reservationResp.setClient(reservation.getClient() == null ? null : reservation.getClient().getId());
         reservationResp.setParkingSpace(reservation.getParkingSpace() == null ? null : reservation.getParkingSpace().getId());
+        reservationResp.setParkingSpaceNbr(reservation.getParkingSpace().getNbr());
+        reservationResp.setFloorNbr(reservation.getParkingSpace().getFloor().getNbr());
+        reservationResp.setParkingName(reservation.getParkingSpace().getFloor().getParking().getName());
+
         return reservationResp;
     }
 
@@ -98,16 +115,22 @@ public class ReservationService implements IReservationService {
 
     private boolean isParkingSpaceAvailable(ReservationReq reservationReq){
 
+
         List<Reservation> parkingSpaceReservations = reservationRepository.findAllByParkingSpaceId(reservationReq.getParkingSpace());
+
+
 
         for (Reservation reservation :parkingSpaceReservations) {
 
             if((reservationReq.getRFrom().isAfter(reservation.getRFrom()) && reservationReq.getRFrom().isBefore(reservation.getRTo()))
             || (reservationReq.getRTo().isAfter(reservation.getRFrom()) && reservationReq.getRTo().isBefore(reservation.getRTo()))
+            || reservationReq.getRFrom().isEqual(reservation.getRFrom())
+            || reservationReq.getRTo().isEqual(reservation.getRTo())
             )
             {
-                throw new NotFoundException("parkingSpace Not Available");
+                throw new NotFoundException("parking Space Not Available");
             }
+
         }
 
 

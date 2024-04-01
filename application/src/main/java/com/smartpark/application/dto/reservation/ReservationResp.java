@@ -19,4 +19,10 @@ public class ReservationResp {
     private UUID client;
 
     private UUID parkingSpace;
+
+    private String parkingSpaceNbr;
+
+    private  int floorNbr;
+
+    private String parkingName;
 }

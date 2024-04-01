@@ -1,6 +1,6 @@
 package com.smartpark.application.config;
 
-import com.smartpark.application.security.services.UserDetailsServiceImp;
+import com.smartpark.application.service.implmnts.security.UserDetailsServiceImp;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;

@@ -17,4 +17,8 @@ public interface ReservationRepo extends JpaRepository<Reservation, UUID> {
 
     List<Reservation> findAllByParkingSpaceId(UUID id);
 
+    List<Reservation> findAllByParkingSpace(ParkingSpace parkingSpace);
+
+    List<Reservation> findAllByClientId(UUID id);
+
 }

@@ -3,7 +3,7 @@ package com.smartpark.application.controller.auth;
 import com.smartpark.application.dto.auth.AuthenticationResponse;
 import com.smartpark.application.dto.user.UserReq;
 import com.smartpark.application.dto.user.UserReqLogin;
-import com.smartpark.application.security.services.AuthenticationService;
+import com.smartpark.application.service.implmnts.security.AuthenticationService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;

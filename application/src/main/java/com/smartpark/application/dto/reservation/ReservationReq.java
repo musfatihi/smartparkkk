@@ -26,7 +26,7 @@ public class ReservationReq {
     @Future
     private LocalDateTime rTo;
 
-    @NotNull
+    //@NotNull
     private UUID client;
 
     @NotNull

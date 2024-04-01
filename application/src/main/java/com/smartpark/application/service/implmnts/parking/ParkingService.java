@@ -11,6 +11,7 @@ import com.smartpark.application.service.implmnts.floor.FloorService;
 import com.smartpark.application.service.intrfaces.parking.IParkingService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,6 +29,7 @@ public class ParkingService implements IParkingService {
 
     private FloorService floorService;
 
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_CLIENT')")
     public List<ParkingResp> findAll() {
         final List<Parking> parkings = parkingRepo.findAll();
         return parkings.stream()
@@ -35,6 +37,8 @@ public class ParkingService implements IParkingService {
                 .toList();
     }
 
+    @Override
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ParkingResp get(final UUID id) {
         return parkingRepo.findById(id)
                 .map(parking -> mapToDTO(parking, new ParkingResp()))
@@ -42,6 +46,7 @@ public class ParkingService implements IParkingService {
     }
 
     @Override
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ParkingResp update(ParkingReq parkingReq) {
         parkingRepo.findById(parkingReq.getId())
                 .orElseThrow(NotFoundException::new);
@@ -49,10 +54,14 @@ public class ParkingService implements IParkingService {
 
     }
 
+    @Override
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ParkingResp save(ParkingReq parkingReq) {
         return modelMapper.map(parkingRepo.save(modelMapper.map(parkingReq, Parking.class)),ParkingResp.class);
     }
 
+    @Override
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public void delete(UUID id) {
         parkingRepo.findById(id)
                 .orElseThrow(NotFoundException::new);

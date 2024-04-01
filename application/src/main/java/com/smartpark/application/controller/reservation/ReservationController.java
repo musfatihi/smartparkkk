@@ -2,7 +2,7 @@ package com.smartpark.application.controller.reservation;
 
 import com.smartpark.application.dto.reservation.ReservationReq;
 import com.smartpark.application.dto.reservation.ReservationResp;
-import com.smartpark.application.service.implmnts.reservation.ReservationService;
+import com.smartpark.application.entity.User;
 import com.smartpark.application.service.intrfaces.reservation.IReservationService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
@@ -10,7 +10,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
 
 import java.util.List;
 import java.util.UUID;
@@ -29,6 +31,11 @@ public class ReservationController {
         return ResponseEntity.ok(reservationService.findAll());
     }
 
+    @GetMapping("/My")
+    public ResponseEntity<List<ReservationResp>> getMyReservations(@AuthenticationPrincipal User currentUser) {
+        return ResponseEntity.ok(reservationService.findMyReservations(currentUser.getId()));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<ReservationResp> getReservation(@PathVariable(name = "id") final UUID id) {
         return ResponseEntity.ok(reservationService.get(id));
@@ -37,7 +44,9 @@ public class ReservationController {
     @PostMapping
     @ApiResponse(responseCode = "201")
     public ResponseEntity<ReservationResp> createReservation(
-            @RequestBody @Valid final ReservationReq reservationReq) {
+            @RequestBody @Valid final ReservationReq reservationReq,
+            @AuthenticationPrincipal User currentUser) {
+        reservationReq.setClient(currentUser.getId());
         return new ResponseEntity<>(reservationService.save(reservationReq), HttpStatus.CREATED);
     }
 
@@ -48,5 +57,4 @@ public class ReservationController {
         reservationService.delete(id);
         return new ResponseEntity<>("Reservation Deleted Successfully", HttpStatus.ACCEPTED);
     }
-
 }
